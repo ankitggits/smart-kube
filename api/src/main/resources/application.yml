@@ -1,0 +1,24 @@
+swagger:
+  enabled: true
+  title: NBA Leads Api
+  version: 2.0
+  description: Leads-2.0
+  name: Ankit Singh
+  email: ankit.singh@abc.no
+  url: www.any-website.no
+  group-base-packages:
+    ping: no.sample.smartkube
+    actuator: org.springframework.boot.actuate
+    admin: de.codecentric.boot.admin
+
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+  port: 8181
+
+spring:
+  application:
+    name: smart-kube
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
