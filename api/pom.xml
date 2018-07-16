@@ -37,8 +37,8 @@
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>localhost:5000/${project.parent.artifactId}/${project.artifactId}:${project.version}</imageName>
-                    <baseImage>localhost:5000/java:8</baseImage>
+                    <imageName>docker.for.mac.localhost:5000/${project.parent.artifactId}/${project.artifactId}:${project.version}</imageName>
+                    <baseImage>docker.for.mac.localhost:5000/java:8</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
                     <resources>
                         <resource>
