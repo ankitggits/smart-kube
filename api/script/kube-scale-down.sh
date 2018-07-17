@@ -1,0 +1,1 @@
+kubectl scale --replicas=0 deployments/smart-kube

@@ -33,7 +33,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.1.1</version>
@@ -52,14 +52,14 @@
                 <executions>
                     <execution>
                         <id>build-image</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>tag-image</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>tag</goal>
                         </goals>
@@ -79,7 +79,42 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>scaling-down</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <exec executable="/bin/bash">
+                                    <arg value="script/kube-scale-down.sh" />
+                                </exec>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scaling-up</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <exec executable="/bin/bash">
+                                    <arg value="script/kube-scale-up.sh" />
+                                </exec>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
