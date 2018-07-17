@@ -36,6 +36,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
+                <version>1.1.1</version>
                 <configuration>
                     <imageName>docker.for.mac.localhost:5000/${project.parent.artifactId}/${project.artifactId}:${project.version}</imageName>
                     <baseImage>docker.for.mac.localhost:5000/java:8</baseImage>
