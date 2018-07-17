@@ -38,7 +38,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.1.1</version>
                 <configuration>
-                    <imageName>docker.for.mac.localhost:5000/${project.parent.artifactId}/${project.artifactId}:${project.version}</imageName>
+                    <imageName>${project.parent.artifactId}/${project.artifactId}:${project.version}</imageName>
                     <baseImage>docker.for.mac.localhost:5000/java:8</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
                     <resources>
@@ -49,6 +49,36 @@
                         </resource>
                     </resources>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>tag-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <image>${project.parent.artifactId}/${project.artifactId}:${project.version}</image>
+                            <newName>docker.for.mac.localhost:5000/${project.parent.artifactId}/${project.artifactId}:${project.version}</newName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>push-image</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <imageName>docker.for.mac.localhost:5000/${project.parent.artifactId}/${project.artifactId}:${project.version}</imageName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
