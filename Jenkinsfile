@@ -11,7 +11,7 @@ podTemplate(label: label,
 
   def image = "docker.for.mac.localhost:5000/smart-kube/api:1.0.0-SNAPSHOT"
   node(label) {
-    stage('Build Docker image') {
+    stage('Source pull and build') {
         git 'https://github.com/ankitggits/smart-kube.git'
         container('maven') {
             sh 'mvn -B clean install'
@@ -34,9 +34,15 @@ podTemplate(label: label,
                 }catch(Exception ex){
                     sh "echo Could not delete ${ret[i]}"
                 }
-
             }
         }
+    }
+    post {
+            // Always runs. And it runs before any of the other post conditions.
+            always {
+                // Let's wipe out the workspace before we finish!
+                deleteDir()
+            }
     }
   }
 }
