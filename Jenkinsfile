@@ -9,7 +9,7 @@ podTemplate(label: label,
       hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')]
   ) {
 
-  def image = "docker.for.mac.localhost:5000/smart-kube/api:1.0.0-SNAPSHOT"
+  def image = "docker.for.mac.localhost:5000/smart-kube/api:latest"
   node(label) {
     stage('Source pull and build') {
         git 'https://github.com/ankitggits/smart-kube.git'
