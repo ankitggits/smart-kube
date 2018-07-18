@@ -37,8 +37,5 @@ podTemplate(label: label,
             }
         }
     }
-    stage('Clear workspace') {
-            deleteDir()
-    }
   }
 }
