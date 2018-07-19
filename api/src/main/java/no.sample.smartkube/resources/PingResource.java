@@ -44,7 +44,7 @@ public class PingResource {
     @GetMapping(path = "/pong", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Representation<Greeting>> pong(){
         return ResponseEntity
-                .ok(Representation.of(new Greeting(counter.incrementAndGet(), String.format(template, "from ping-pong!! Welcome to smart-kube!!")))
+                .ok(Representation.of(new Greeting(counter.incrementAndGet(), String.format(template, "from ping-pong!! Good night!!")))
                 );
     }
 
