@@ -13,6 +13,7 @@ podTemplate(label: label,
   node(label) {
   try{
         stage('Source pull and build') {
+            sh "echo branch is ${env.BRANCH_NAME}"
             git url: "https://github.com/ankitggits/smart-kube.git", branch: "${env.BRANCH_NAME}"
             container('maven') {
                 sh 'mvn -B clean install'
