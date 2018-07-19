@@ -41,7 +41,11 @@ podTemplate(label: label,
         }
     }
     finally{
-        junit '**/target/surefire-reports/*.xml'
+        try{
+            junit '**/target/surefire-reports/*.xml'
+        }catch(Exception e){
+            sh "echo no test results found"
+        }
     }
   }
 }
