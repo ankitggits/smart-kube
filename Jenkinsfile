@@ -12,7 +12,7 @@ podTemplate(label: label,
   def image = "docker.for.mac.localhost:5000/smart-kube/api:latest"
   node(label) {
     stage('Source pull and build') {
-        git 'https://github.com/ankitggits/smart-kube.git'
+        git url: "https://github.com/ankitggits/smart-kube.git", branch: "${env.BRANCH_NAME}"
         container('maven') {
             sh 'mvn -B clean install'
         }
