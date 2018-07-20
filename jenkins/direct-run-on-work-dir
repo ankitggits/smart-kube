@@ -1,0 +1,75 @@
+def label = "pipeline-${UUID.randomUUID().toString()}"
+
+def deployment = "smart-kube"
+def image = "docker.for.mac.localhost:5000/${deployment}/api:latest"
+def localPath = "/Users/ankit/IdeaProjects/sample/smart-kube/"
+
+podTemplate(label: label, runAsUser: 0, fsGroup: 0,
+  containers: [
+        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.8', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat')
+  ],
+  volumes: [
+      persistentVolumeClaim(mountPath: '/root/.m2', claimName: 'maven-repo', readOnly: false),
+      hostPathVolume(mountPath: '/home/project', hostPath: localPath, readOnly: false),
+      hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')]
+  ) {
+  node(label) {
+
+        stage('Cloning Work Space') {
+
+            container('maven') {
+                sh 'cd /home/project/ && mvn -B clean'
+            }
+
+            container('docker') {
+                def ret = sh(script: 'docker ps -a -q --filter="name=k8s_maven_jenkins-slave"', returnStdout: true).split( '\n' )
+                sh "echo Trying to copy to ${ret}"
+                for (int i = 0; i < ret.size(); i++) {
+                    sh "echo Trying to copy to ${ret[i]}"
+                    try{
+                        sh "docker cp /home/project/. ${ret[i]}:${WORKSPACE}"
+                    }catch(Exception e){
+                        sh "echo abandaned container ${ret[i]}"
+                    }
+                }
+                sh "echo copy finished"
+            }
+        }
+
+        stage('Source pull and build') {
+            container('maven') {
+                sh 'mvn -B clean install'
+            }
+        }
+
+        stage('Fetching Test Report') {
+            container('maven') {
+                junit '**/target/surefire-reports/TEST-*.xml'
+            }
+        }
+
+        stage('Docker Image Building') {
+            sh "cd ${WORKSPACE}"
+            container('docker') {
+                sh "docker build -t ${image} ."
+                sh "docker push ${image}"
+            }
+        }
+        stage('Kubernates Pods Rollout') {
+            container('docker') {
+                def ret = sh(script: 'docker ps -a -q --filter="name=k8s_${deployment}"', returnStdout: true).split( '\n' )
+                sh "echo Trying to stop pods ${ret}"
+                for (int i = 0; i < ret.size(); i++) {
+                    sh "echo Trying to stop pod ${ret[i]}"
+                    try{
+                        sh "docker rm -f ${ret[i]}"
+                    }catch(Exception ex){
+                        sh "echo Could not delete ${ret[i]}"
+                    }
+                }
+            }
+        }
+  }
+}
